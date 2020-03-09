@@ -181,7 +181,7 @@ class _MyHomePageState extends State<MyHomePage> {
               child: TextField(
                 controller: _email,
                 decoration: InputDecoration(
-                    hintText: 'corre@dominio', labelText: "Correo electrónico"),
+                    hintText: 'correo@dominio', labelText: "Correo electrónico"),
                 keyboardType: TextInputType.emailAddress,
               ),
             ),
