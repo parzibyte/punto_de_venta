@@ -1,6 +1,32 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+
+const RUTA_API = "http://192.168.1.73/sistema_ventas_laravel/public/api/auth";
+var rutaLogin = "$RUTA_API/login";
 
 void main() => runApp(MyApp());
+
+Future<String> hacerLogin(String email, String password) async {
+  final http.Response response = await http.post(
+    rutaLogin,
+    headers: <String, String>{
+      'Content-Type': 'application/json; charset=UTF-8',
+    },
+    body: jsonEncode(<String, String>{
+      'email': email,
+      'password': password,
+    }),
+  );
+  if (response.statusCode == 200) {
+    Map<String, dynamic> j = json.decode(response.body);
+    var token = j["access_token"];
+    return token;
+  } else {
+    throw Exception('Datos incorrectos');
+  }
+}
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
@@ -46,6 +72,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   final TextEditingController _email = TextEditingController();
   final TextEditingController _password = TextEditingController();
+  Future<String> _futureAlbum;
 
   @override
   Widget build(BuildContext context) {
@@ -81,6 +108,17 @@ class _MyHomePageState extends State<MyHomePage> {
           // horizontal).
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
+            FutureBuilder<String>(
+              future: _futureAlbum,
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  return Text(snapshot.data);
+                } else if (snapshot.hasError) {
+                  return Text("Error iniciando sesión");
+                }
+                return CircularProgressIndicator();
+              },
+            ),
             Padding(
               padding: EdgeInsets.all(16.0),
               child: TextField(
@@ -96,21 +134,25 @@ class _MyHomePageState extends State<MyHomePage> {
                 controller: _password,
                 decoration: InputDecoration(
                     hintText: 'Contraseña', labelText: 'Contraseña'),
-                obscureText: true,
+                obscureText: true, /* <-- Aquí */
               ),
             ),
             Builder(
-              builder: (context) => RaisedButton(
-                child: Text('Iniciar sesión'),
-                onPressed: () {
-                  final scaffold = Scaffold.of(context);
-                  scaffold.showSnackBar(
-                    SnackBar(
-                      content: const Text('Ejemplo'),
-                    ),
-                  );
-                },
-              ),
+              builder: (context) =>
+                  RaisedButton(
+                    child: Text('Iniciar sesión'),
+                    onPressed: () {
+                      setState(() {
+                        _futureAlbum = hacerLogin(_email.text, _password.text);
+                      });
+//                  final scaffold = Scaffold.of(context);
+//                  scaffold.showSnackBar(
+//                    SnackBar(
+//                      content: const Text('Ejemplo'),
+//                    ),
+//                  );
+                    },
+                  ),
             )
           ],
         ),
