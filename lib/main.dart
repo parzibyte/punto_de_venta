@@ -2,11 +2,52 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-
+import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:developer';
 const RUTA_API = "http://192.168.1.73/sistema_ventas_laravel/public/api/auth";
 var rutaLogin = "$RUTA_API/login";
 
+
+void _revisarToken() async {
+  final prefs = await SharedPreferences.getInstance();
+  String posibleToken = prefs.getString("token_api");
+  log("Posible token: $posibleToken");
+  if (posibleToken != null) {
+    navigatorKey.currentState
+        .push(MaterialPageRoute(builder: (context) => Escritorio()));
+  }
+}
+
+void _guardarToken(String token) async{
+  log("Estoy guardando el token...");
+  final prefs = await SharedPreferences.getInstance();
+  prefs.setString("token_api", token);
+  log("Terminado de guardar token");
+}
+
 void main() => runApp(MyApp());
+
+final GlobalKey<NavigatorState> navigatorKey = new GlobalKey<NavigatorState>();
+
+class Escritorio extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Second Route"),
+      ),
+      body: Center(
+        child: RaisedButton(
+          onPressed: () {
+            // Navigate back to first route when tapped.
+            Navigator.pop(context);
+          },
+          child: Text('Go back!'),
+        ),
+      ),
+    );
+  }
+}
 
 Future<String> hacerLogin(String email, String password) async {
   final http.Response response = await http.post(
@@ -22,6 +63,7 @@ Future<String> hacerLogin(String email, String password) async {
   if (response.statusCode == 200) {
     Map<String, dynamic> j = json.decode(response.body);
     var token = j["access_token"];
+     _guardarToken(token);
     return token;
   } else {
     throw Exception('Datos incorrectos');
@@ -33,6 +75,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      navigatorKey: navigatorKey,
       title: 'Punto de venta',
       theme: ThemeData(
         // This is the theme of your application.
@@ -73,6 +116,13 @@ class _MyHomePageState extends State<MyHomePage> {
   final TextEditingController _email = TextEditingController();
   final TextEditingController _password = TextEditingController();
   Future<String> _futureLogin;
+
+  @override
+  void initState() {
+    super.initState();
+    _revisarToken();
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -142,6 +192,11 @@ class _MyHomePageState extends State<MyHomePage> {
             RaisedButton(
               child: Text('Iniciar sesión'),
               onPressed: () {
+//                var xd = await hacerLogin("", "");
+//                Navigator.push(
+//                  context,
+//                  MaterialPageRoute(builder: (context) => Escritorio()),
+//                );
                 setState(() {
                   _futureLogin = hacerLogin(_email.text, _password.text);
                 });
