@@ -1,28 +1,33 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
-import 'dart:developer';
+
 const RUTA_API = "http://192.168.1.73/sistema_ventas_laravel/public/api/auth";
 var rutaLogin = "$RUTA_API/login";
-
 
 void _revisarToken() async {
   final prefs = await SharedPreferences.getInstance();
   String posibleToken = prefs.getString("token_api");
   log("Posible token: $posibleToken");
   if (posibleToken != null) {
-    navigatorKey.currentState
-        .push(MaterialPageRoute(builder: (context) => Escritorio()));
+    _navegarAEscritorio();
   }
 }
 
-void _guardarToken(String token) async{
+void _navegarAEscritorio() {
+  navigatorKey.currentState
+      .push(MaterialPageRoute(builder: (context) => Escritorio()));
+}
+
+void _guardarToken(String token) async {
   log("Estoy guardando el token...");
   final prefs = await SharedPreferences.getInstance();
   prefs.setString("token_api", token);
   log("Terminado de guardar token");
+  _navegarAEscritorio();
 }
 
 void main() => runApp(MyApp());
@@ -63,7 +68,8 @@ Future<String> hacerLogin(String email, String password) async {
   if (response.statusCode == 200) {
     Map<String, dynamic> j = json.decode(response.body);
     var token = j["access_token"];
-     _guardarToken(token);
+    _guardarToken(token);
+
     return token;
   } else {
     throw Exception('Datos incorrectos');
@@ -123,7 +129,6 @@ class _MyHomePageState extends State<MyHomePage> {
     _revisarToken();
   }
 
-
   @override
   Widget build(BuildContext context) {
     // This method is rerun every time setState is called, for instance as done
@@ -163,7 +168,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     future: _futureLogin,
                     builder: (context, snapshot) {
                       if (snapshot.hasData) {
-                        return Text(snapshot.data);
+                        return Text("Bienvenido");
                       } else if (snapshot.hasError) {
                         return Text("Error iniciando sesión");
                       }
