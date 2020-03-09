@@ -72,7 +72,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   final TextEditingController _email = TextEditingController();
   final TextEditingController _password = TextEditingController();
-  Future<String> _futureAlbum;
+  Future<String> _futureLogin;
 
   @override
   Widget build(BuildContext context) {
@@ -106,19 +106,21 @@ class _MyHomePageState extends State<MyHomePage> {
           // center the children vertically; the main axis here is the vertical
           // axis because Columns are vertical (the cross axis would be
           // horizontal).
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
-            FutureBuilder<String>(
-              future: _futureAlbum,
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  return Text(snapshot.data);
-                } else if (snapshot.hasError) {
-                  return Text("Error iniciando sesión");
-                }
-                return CircularProgressIndicator();
-              },
-            ),
+            (_futureLogin != null)
+                ? FutureBuilder<String>(
+                    future: _futureLogin,
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData) {
+                        return Text(snapshot.data);
+                      } else if (snapshot.hasError) {
+                        return Text("Error iniciando sesión");
+                      }
+                      return CircularProgressIndicator();
+                    },
+                  )
+                : Text(""),
             Padding(
               padding: EdgeInsets.all(16.0),
               child: TextField(
@@ -137,23 +139,20 @@ class _MyHomePageState extends State<MyHomePage> {
                 obscureText: true, /* <-- Aquí */
               ),
             ),
-            Builder(
-              builder: (context) =>
-                  RaisedButton(
-                    child: Text('Iniciar sesión'),
-                    onPressed: () {
-                      setState(() {
-                        _futureAlbum = hacerLogin(_email.text, _password.text);
-                      });
+            RaisedButton(
+              child: Text('Iniciar sesión'),
+              onPressed: () {
+                setState(() {
+                  _futureLogin = hacerLogin(_email.text, _password.text);
+                });
 //                  final scaffold = Scaffold.of(context);
 //                  scaffold.showSnackBar(
 //                    SnackBar(
 //                      content: const Text('Ejemplo'),
 //                    ),
 //                  );
-                    },
-                  ),
-            )
+              },
+            ),
           ],
         ),
       ), // This trailing comma makes auto-formatting nicer for build methods.
