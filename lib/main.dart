@@ -103,7 +103,10 @@ class Escritorio extends StatelessWidget {
                 _navegarAProductos();
               },
               child: ListTile(
-                title: Text('Productos'),
+                title: Text(
+                  'Productos',
+                  textAlign: TextAlign.center,
+                ),
                 subtitle: Image(
                   image: AssetImage("assets/order.png"),
                 ),
@@ -118,7 +121,10 @@ class Escritorio extends StatelessWidget {
                 _navegarAVentas();
               },
               child: ListTile(
-                title: Text('Ventas'),
+                title: Text(
+                  'Ventas',
+                  textAlign: TextAlign.center,
+                ),
                 subtitle: Image(
                   image: AssetImage("assets/coupon.png"),
                 ),
@@ -133,7 +139,10 @@ class Escritorio extends StatelessWidget {
                 _navegarAAcercaDe();
               },
               child: ListTile(
-                title: Text('Acerca de'),
+                title: Text(
+                  'Acerca de',
+                  textAlign: TextAlign.center,
+                ),
                 subtitle: Image(
                   image: AssetImage("assets/about.png"),
                 ),
