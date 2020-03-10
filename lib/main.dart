@@ -22,6 +22,21 @@ void _navegarAEscritorio() {
       .push(MaterialPageRoute(builder: (context) => Escritorio()));
 }
 
+void _navegarAProductos() {
+  navigatorKey.currentState
+      .push(MaterialPageRoute(builder: (context) => Productos()));
+}
+
+void _navegarAVentas() {
+  navigatorKey.currentState
+      .push(MaterialPageRoute(builder: (context) => Ventas()));
+}
+
+void _navegarAAcercaDe() {
+  navigatorKey.currentState
+      .push(MaterialPageRoute(builder: (context) => AcercaDe()));
+}
+
 void _guardarToken(String token) async {
   log("Estoy guardando el token...");
   final prefs = await SharedPreferences.getInstance();
@@ -34,21 +49,98 @@ void main() => runApp(MyApp());
 
 final GlobalKey<NavigatorState> navigatorKey = new GlobalKey<NavigatorState>();
 
+class Productos extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Productos"),
+      ),
+      body: Text("Productos"),
+    );
+  }
+}
+
+class Ventas extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Ventas"),
+      ),
+      body: Text("Ventas"),
+    );
+  }
+}
+
+class AcercaDe extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("AcercaDe"),
+      ),
+      body: Text("AcercaDe"),
+    );
+  }
+}
+
 class Escritorio extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Second Route"),
+        title: Text("Escritorio"),
       ),
-      body: Center(
-        child: RaisedButton(
-          onPressed: () {
-            // Navigate back to first route when tapped.
-            Navigator.pop(context);
-          },
-          child: Text('Go back!'),
-        ),
+      body: GridView.count(
+        crossAxisCount: 2,
+        children: <Widget>[
+          Card(
+            elevation: 10,
+            child: InkWell(
+              splashColor: Colors.blue.withAlpha(30),
+              onTap: () {
+                _navegarAProductos();
+              },
+              child: ListTile(
+                title: Text('Productos'),
+                subtitle: Image(
+                  image: AssetImage("assets/order.png"),
+                ),
+              ),
+            ),
+          ),
+          Card(
+            elevation: 10,
+            child: InkWell(
+              splashColor: Colors.blue.withAlpha(30),
+              onTap: () {
+                _navegarAVentas();
+              },
+              child: ListTile(
+                title: Text('Ventas'),
+                subtitle: Image(
+                  image: AssetImage("assets/coupon.png"),
+                ),
+              ),
+            ),
+          ),
+          Card(
+            elevation: 10,
+            child: InkWell(
+              splashColor: Colors.blue.withAlpha(30),
+              onTap: () {
+                _navegarAAcercaDe();
+              },
+              child: ListTile(
+                title: Text('Acerca de'),
+                subtitle: Image(
+                  image: AssetImage("assets/about.png"),
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -181,7 +273,8 @@ class _MyHomePageState extends State<MyHomePage> {
               child: TextField(
                 controller: _email,
                 decoration: InputDecoration(
-                    hintText: 'correo@dominio', labelText: "Correo electrónico"),
+                    hintText: 'correo@dominio',
+                    labelText: "Correo electrónico"),
                 keyboardType: TextInputType.emailAddress,
               ),
             ),
