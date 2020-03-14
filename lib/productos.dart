@@ -4,7 +4,8 @@ import 'dart:developer';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'constantes.dart';
-
+import 'navigator.dart';
+import 'productos_agregar.dart';
 class Productos extends StatefulWidget {
   @override
   ProductosState createState() => ProductosState();
@@ -51,7 +52,8 @@ class ProductosState extends State<Productos> {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          // Add your onPressed code here!
+          navigatorKey.currentState
+              .push(MaterialPageRoute(builder: (context) => AgregarProducto(idProducto: 666,)));
         },
         child: Icon(Icons.add),
       ),
