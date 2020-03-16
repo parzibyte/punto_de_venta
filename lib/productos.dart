@@ -1,11 +1,14 @@
-import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'dart:developer';
-import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'dart:developer';
+
+import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
+
 import 'constantes.dart';
 import 'navigator.dart';
 import 'productos_agregar.dart';
+
 class Productos extends StatefulWidget {
   @override
   ProductosState createState() => ProductosState();
@@ -51,9 +54,17 @@ class ProductosState extends State<Productos> {
   Widget build(BuildContext context) {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          navigatorKey.currentState
-              .push(MaterialPageRoute(builder: (context) => AgregarProducto(idProducto: 666,)));
+        onPressed: () async {
+          /*
+          * Esperamos a que vuelva de la ruta y refrescamos
+          * los productos. No encontré otra manera de hacer que
+          * se escuche cuando se regresa de la ruta
+          * */
+          await navigatorKey.currentState.push(MaterialPageRoute(
+              builder: (context) => AgregarProducto(
+                    idProducto: 666,
+                  )));
+          this.obtenerProductos();
         },
         child: Icon(Icons.add),
       ),
