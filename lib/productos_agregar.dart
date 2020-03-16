@@ -127,26 +127,40 @@ class AgregarProductoState extends State<AgregarProducto> {
             ),
             Padding(
               padding: EdgeInsets.all(16.0),
-              child: RaisedButton(
-                color: Colors.blue,
-                textColor: Colors.white,
-                child: cargando
-                    ? CircularProgressIndicator(
-                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                      )
-                    : Text("Guardar"),
-                onPressed: () {
-                  if (cargando) {
-                    return;
-                  }
-                  Producto p = new Producto(
-                      _codigoBarras.text,
-                      _descripcion.text,
-                      _precioCompra.text,
-                      _precioVenta.text,
-                      _existencia.text);
-                  agregarProducto(p);
-                },
+              child: Builder(
+                builder: (context) => RaisedButton(
+                  color: Colors.blue,
+                  textColor: Colors.white,
+                  child: cargando
+                      ? CircularProgressIndicator(
+                          valueColor:
+                              AlwaysStoppedAnimation<Color>(Colors.white),
+                        )
+                      : Text("Guardar"),
+                  onPressed: () async {
+                    if (cargando) {
+                      return;
+                    }
+                    Producto p = new Producto(
+                        _codigoBarras.text,
+                        _descripcion.text,
+                        _precioCompra.text,
+                        _precioVenta.text,
+                        _existencia.text);
+                    await agregarProducto(p);
+                    Scaffold.of(context)
+                        .showSnackBar(
+                          SnackBar(
+                            content: Text('Producto guardado'),
+                            duration: Duration(seconds: 1),
+                          ),
+                        )
+                        .closed
+                        .then((razon) {
+                      Navigator.of(context).pop();
+                    });
+                  },
+                ),
               ),
             ),
           ],
