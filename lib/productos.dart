@@ -7,6 +7,7 @@ import 'package:puntodeventa/productos_editar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'constantes.dart';
+import 'dialogo.dart';
 import 'navigator.dart';
 import 'productos_agregar.dart';
 
@@ -22,6 +23,28 @@ class ProductosState extends State<Productos> {
   void initState() {
     super.initState();
     this.obtenerProductos();
+  }
+
+  Future<bool> eliminarProducto(String id) async {
+    log("Obteniendo prefs...");
+    final prefs = await SharedPreferences.getInstance();
+    String posibleToken = prefs.getString("token_api");
+    log("Posible token: $posibleToken");
+    if (posibleToken == null) {
+      log("No hay token");
+      return false;
+    }
+    log("Haciendo petición...");
+    final http.Response response = await http.delete(
+      "$RUTA_API/producto/$id",
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Authorization': 'Bearer $posibleToken',
+      },
+    );
+    log("Response es 200?");
+    log((response.statusCode == 200).toString());
+    return response.statusCode == 200;
   }
 
   Future<String> obtenerProductos() async {
@@ -169,14 +192,40 @@ class ProductosState extends State<Productos> {
                       this.obtenerProductos();
                     },
                   ),
-                  FlatButton(
-                    child: Icon(
-                      Icons.delete,
-                      color: Colors.red,
+                  Builder(
+                    builder: (context) => FlatButton(
+                      child: Icon(
+                        Icons.delete,
+                        color: Colors.red,
+                      ),
+                      onPressed: () {
+                        showAlertDialog(
+                            context,
+                            FlatButton(
+                              child: Text("Cancelar"),
+                              onPressed: () {
+                                navigatorKey.currentState.pop();
+                              },
+                            ),
+                            FlatButton(
+                              child: Text("Sí, eliminar"),
+                              onPressed: () async {
+                                await eliminarProducto(
+                                    this.productos[index]["id"].toString());
+                                navigatorKey.currentState.pop();
+                                this.obtenerProductos();
+                                Scaffold.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text('Producto eliminado'),
+                                    duration: Duration(seconds: 1),
+                                  ),
+                                );
+                              },
+                            ),
+                            "Eliminar producto",
+                            "¿Realmente deseas eliminar el producto ${this.productos[index]["descripcion"]}? esto no se puede deshacer");
+                      },
                     ),
-                    onPressed: () {
-                      /* ... */
-                    },
                   ),
                 ],
               ),
