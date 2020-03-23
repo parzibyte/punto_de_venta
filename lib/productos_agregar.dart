@@ -19,6 +19,7 @@ class AgregarProducto extends StatefulWidget {
 }
 
 class AgregarProductoState extends State<AgregarProducto> {
+  final _claveFormulario = GlobalKey<FormState>();
   final TextEditingController _codigoBarras = TextEditingController();
   final TextEditingController _descripcion = TextEditingController();
   final TextEditingController _precioCompra = TextEditingController();
@@ -71,101 +72,135 @@ class AgregarProductoState extends State<AgregarProducto> {
       appBar: AppBar(
         title: Text("Agregar producto"),
       ),
-      body: Center(
-        child: ListView(
-//          shrinkWrap: true,
-          children: <Widget>[
-            Padding(
-              padding: EdgeInsets.all(16.0),
-              child: TextField(
-                controller: _codigoBarras,
-                decoration: InputDecoration(
-                  hintText: 'Escribe el código',
-                  labelText: "Código de barras",
-                ),
+      body: Form(
+        key: _claveFormulario,
+        child: ListView(shrinkWrap: true, children: <Widget>[
+          Padding(
+            padding: EdgeInsets.all(16.0),
+            child: TextFormField(
+              keyboardType: TextInputType.number,
+              validator: (value) {
+                if (value.isEmpty) {
+                  return 'Escribe el código de barras';
+                }
+                return null;
+              },
+              controller: _codigoBarras,
+              decoration: InputDecoration(
+                hintText: 'Escribe el código',
+                labelText: "Código de barras",
               ),
             ),
-            Padding(
-              padding: EdgeInsets.all(16.0),
-              child: TextField(
-                controller: _descripcion,
-                decoration: InputDecoration(
-                  hintText: 'Escribe la descripción',
-                  labelText: "Descripción",
-                ),
+          ),
+          Padding(
+            padding: EdgeInsets.all(16.0),
+            child: TextFormField(
+              validator: (value) {
+                if (value.isEmpty) {
+                  return 'Escribe la descripción';
+                }
+                return null;
+              },
+              controller: _descripcion,
+              decoration: InputDecoration(
+                hintText: 'Escribe la descripción',
+                labelText: "Descripción",
               ),
             ),
-            Padding(
-              padding: EdgeInsets.all(16.0),
-              child: TextField(
-                controller: _precioCompra,
-                decoration: InputDecoration(
-                  hintText: 'Escribe el precio de compra',
-                  labelText: "Precio de compra",
-                ),
+          ),
+          Padding(
+            padding: EdgeInsets.all(16.0),
+            child: TextFormField(
+              keyboardType: TextInputType.number,
+              validator: (value) {
+                if (value.isEmpty) {
+                  return 'Escribe el precio de compra';
+                }
+                return null;
+              },
+              controller: _precioCompra,
+              decoration: InputDecoration(
+                hintText: 'Escribe el precio de compra',
+                labelText: "Precio de compra",
               ),
             ),
-            Padding(
-              padding: EdgeInsets.all(16.0),
-              child: TextField(
-                controller: _precioVenta,
-                decoration: InputDecoration(
-                  hintText: 'Escribe el precio de venta',
-                  labelText: "Precio de venta",
-                ),
+          ),
+          Padding(
+            padding: EdgeInsets.all(16.0),
+            child: TextFormField(
+              keyboardType: TextInputType.number,
+              validator: (value) {
+                if (value.isEmpty) {
+                  return 'Escribe el precio de venta';
+                }
+                return null;
+              },
+              controller: _precioVenta,
+              decoration: InputDecoration(
+                hintText: 'Escribe el precio de venta',
+                labelText: "Precio de venta",
               ),
             ),
-            Padding(
-              padding: EdgeInsets.all(16.0),
-              child: TextField(
-                controller: _existencia,
-                decoration: InputDecoration(
-                  hintText: 'Escribe la existencia',
-                  labelText: "Existencia",
-                ),
+          ),
+          Padding(
+            padding: EdgeInsets.all(16.0),
+            child: TextFormField(
+              keyboardType: TextInputType.number,
+              validator: (value) {
+                if (value.isEmpty) {
+                  return 'Escribe la existencia';
+                }
+                return null;
+              },
+              controller: _existencia,
+              decoration: InputDecoration(
+                hintText: 'Escribe la existencia',
+                labelText: "Existencia",
               ),
             ),
-            Padding(
-              padding: EdgeInsets.all(16.0),
-              child: Builder(
-                builder: (context) => RaisedButton(
-                  color: Colors.blue,
-                  textColor: Colors.white,
-                  child: cargando
-                      ? CircularProgressIndicator(
-                          valueColor:
-                              AlwaysStoppedAnimation<Color>(Colors.white),
-                        )
-                      : Text("Guardar"),
-                  onPressed: () async {
-                    if (cargando) {
-                      return;
-                    }
-                    Producto p = new Producto(
-                        _codigoBarras.text,
-                        _descripcion.text,
-                        _precioCompra.text,
-                        _precioVenta.text,
-                        _existencia.text);
-                    await agregarProducto(p);
-                    Scaffold.of(context)
-                        .showSnackBar(
-                          SnackBar(
-                            content: Text('Producto guardado'),
-                            duration: Duration(seconds: 1),
-                          ),
-                        )
-                        .closed
-                        .then((razon) {
-                      Navigator.of(context).pop();
-                    });
-                  },
-                ),
+          ),
+          Padding(
+            padding: EdgeInsets.all(16.0),
+            child: Builder(
+              builder: (context) => RaisedButton(
+                color: Colors.blue,
+                textColor: Colors.white,
+                child: cargando
+                    ? CircularProgressIndicator(
+                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                      )
+                    : Text("Guardar"),
+                onPressed: () async {
+                  if (!_claveFormulario.currentState.validate()) {
+                    return;
+                  }
+                  if (cargando) {
+                    return;
+                  }
+                  Producto p = new Producto(
+                      _codigoBarras.text,
+                      _descripcion.text,
+                      _precioCompra.text,
+                      _precioVenta.text,
+                      _existencia.text);
+                  await agregarProducto(p);
+                  Scaffold.of(context)
+                      .showSnackBar(
+                        SnackBar(
+                          content: Text('Producto guardado'),
+                          duration: Duration(seconds: 1),
+                        ),
+                      )
+                      .closed
+                      .then((razon) {
+                    Navigator.of(context).pop();
+                  });
+                },
               ),
             ),
-          ],
-        ),
-      ),
+          ),
+        ]),
+      ), //      body: Center(
     );
   }
 }
