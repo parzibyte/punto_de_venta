@@ -9,13 +9,10 @@ import 'clase_producto.dart';
 import 'constantes.dart';
 
 class AgregarProducto extends StatefulWidget {
-  final int idProducto;
-
-  AgregarProducto({Key key, @required this.idProducto}) : super(key: key);
+  AgregarProducto({Key key}) : super(key: key);
 
   @override
-  AgregarProductoState createState() =>
-      AgregarProductoState(idProducto: this.idProducto);
+  AgregarProductoState createState() => AgregarProductoState();
 }
 
 class AgregarProductoState extends State<AgregarProducto> {
@@ -61,10 +58,9 @@ class AgregarProductoState extends State<AgregarProducto> {
     return response.statusCode == 200;
   }
 
-  final int idProducto;
   bool cargando = false;
 
-  AgregarProductoState({Key key, @required this.idProducto}) : super();
+  AgregarProductoState({Key key}) : super();
 
   @override
   Widget build(BuildContext context) {
@@ -200,7 +196,7 @@ class AgregarProductoState extends State<AgregarProducto> {
             ),
           ),
         ]),
-      ), //      body: Center(
+      ),
     );
   }
 }
