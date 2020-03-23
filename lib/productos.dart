@@ -3,6 +3,7 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:puntodeventa/productos_editar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'constantes.dart';
@@ -45,8 +46,6 @@ class ProductosState extends State<Productos> {
       productos = json.decode(response.body);
     });
 
-    log("Un producto: " + productos[1]["descripcion"]);
-
     return "Success!";
   }
 
@@ -60,10 +59,8 @@ class ProductosState extends State<Productos> {
           * los productos. No encontré otra manera de hacer que
           * se escuche cuando se regresa de la ruta
           * */
-          await navigatorKey.currentState.push(MaterialPageRoute(
-              builder: (context) => AgregarProducto(
-                    idProducto: 666,
-                  )));
+          await navigatorKey.currentState
+              .push(MaterialPageRoute(builder: (context) => AgregarProducto()));
           this.obtenerProductos();
         },
         child: Icon(Icons.add),
@@ -161,8 +158,15 @@ class ProductosState extends State<Productos> {
                       Icons.edit,
                       color: Colors.amber,
                     ),
-                    onPressed: () {
-                      /* ... */
+                    onPressed: () async {
+                      await navigatorKey.currentState.push(
+                        MaterialPageRoute(
+                          builder: (context) => EditarProducto(
+                            idProducto: this.productos[index]["id"],
+                          ),
+                        ),
+                      );
+                      this.obtenerProductos();
                     },
                   ),
                   FlatButton(
@@ -179,12 +183,6 @@ class ProductosState extends State<Productos> {
               Divider(),
             ],
           );
-//          return ListTile(
-//              title: Text(productos[index]["descripcion"]),
-//              subtitle: Text(productos[index]["codigo_barras"]));
-//          return Card(
-//            child: Text(productos[index]["descripcion"]),
-//          );
         },
       ),
     );
