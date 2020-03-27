@@ -63,6 +63,8 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  final _claveFormulario = GlobalKey<FormState>();
+
   Future<bool> login(String usuario, String password) async {
     setState(() {
       cargandoBoton = true;
@@ -134,15 +136,25 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         title: Text(widget.title),
       ),
-      body: Center(
-        child: cargandoGeneralmente
-            ? CircularProgressIndicator()
-            : Column(
-                mainAxisAlignment: MainAxisAlignment.start,
+      body: cargandoGeneralmente
+          ? Center(child: CircularProgressIndicator())
+          : Form(
+              key: _claveFormulario,
+              child: ListView(
+                shrinkWrap: true,
                 children: <Widget>[
                   Padding(
                     padding: EdgeInsets.all(16.0),
-                    child: TextField(
+                    child: TextFormField(
+                      validator: (value) {
+                        if (value.isEmpty) {
+                          return 'Escribe el correo electrónico';
+                        }
+                        if (!value.contains("@")) {
+                          return 'El correo electrónico debe llevar un @';
+                        }
+                        return null;
+                      },
                       controller: _email,
                       decoration: InputDecoration(
                           hintText: 'correo@dominio',
@@ -152,43 +164,56 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),
                   Padding(
                     padding: EdgeInsets.all(16.0),
-                    child: TextField(
+                    child: TextFormField(
                       controller: _password,
+                      validator: (value) {
+                        if (value.isEmpty) {
+                          return 'Escribe la contraseña';
+                        }
+                        return null;
+                      },
                       decoration: InputDecoration(
                           hintText: 'Contraseña', labelText: 'Contraseña'),
                       obscureText: true, /* <-- Aquí */
                     ),
                   ),
                   Builder(
-                    builder: (context) => RaisedButton(
-                      color: Colors.blue,
-                      textColor: Colors.white,
-                      child: cargandoBoton
-                          ? CircularProgressIndicator(
-                              valueColor:
-                                  AlwaysStoppedAnimation<Color>(Colors.white),
-                            )
-                          : Text('Iniciar sesión'),
-                      onPressed: () async {
-                        bool respuesta =
-                            await login(_email.text, _password.text);
-                        if (respuesta) {
-                          navegarAEscritorio();
-                        } else {
-                          Scaffold.of(context).showSnackBar(
-                            SnackBar(
-                              content:
-                                  Text('Datos incorrectos. Intenta de nuevo'),
-                              duration: Duration(seconds: 1),
-                            ),
-                          );
-                        }
-                      },
+                    builder: (context) => Padding(
+                      padding: EdgeInsets.all(16.0),
+                      child: RaisedButton(
+                        color: Colors.blue,
+                        textColor: Colors.white,
+                        child: cargandoBoton
+                            ? CircularProgressIndicator(
+                                valueColor:
+                                    AlwaysStoppedAnimation<Color>(Colors.white),
+                              )
+                            : Text('Iniciar sesión'),
+                        onPressed: () async {
+                          if (!_claveFormulario.currentState.validate()) {
+                            return;
+                          }
+                          if (cargandoBoton) return;
+                          bool respuesta =
+                              await login(_email.text, _password.text);
+                          if (respuesta) {
+                            navegarAEscritorio();
+                          } else {
+                            Scaffold.of(context).showSnackBar(
+                              SnackBar(
+                                content:
+                                    Text('Datos incorrectos. Intenta de nuevo'),
+                                duration: Duration(seconds: 1),
+                              ),
+                            );
+                          }
+                        },
+                      ),
                     ),
                   ),
                 ],
               ),
-      ),
+            ),
     );
   }
 }
