@@ -53,6 +53,24 @@ class Escritorio extends StatelessWidget {
             child: InkWell(
               splashColor: Colors.blue.withAlpha(30),
               onTap: () {
+                navegarAClientes();
+              },
+              child: ListTile(
+                title: Text(
+                  'Clientes',
+                  textAlign: TextAlign.center,
+                ),
+                subtitle: Image(
+                  image: AssetImage("assets/clientes.png"),
+                ),
+              ),
+            ),
+          ),
+          Card(
+            elevation: 10,
+            child: InkWell(
+              splashColor: Colors.blue.withAlpha(30),
+              onTap: () {
                 navegarAAcercaDe();
               },
               child: ListTile(
