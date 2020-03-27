@@ -62,6 +62,7 @@ class AcercaDe extends StatelessWidget {
                   "Acerca de: Icons made by inipagistudio (https://www.flaticon.com/authors/inipagistudio) from www.flaticon.com"),
               Text(
                   "Clientes: Icons made by Freepik (https://www.flaticon.com/authors/freepik) from www.flaticon.com"),
+              Text("Icono de la app: Icons made by Freepik (https://www.flaticon.com/authors/freepik) from www.flaticon.com"),
             ],
           ),
         ),
