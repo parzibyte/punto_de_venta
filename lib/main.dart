@@ -17,28 +17,6 @@ Future _guardarToken(String token) async {
 
 void main() => runApp(MyApp());
 
-Future<String> hacerLogin(String email, String password) async {
-  final http.Response response = await http.post(
-    rutaLogin,
-    headers: <String, String>{
-      'Content-Type': 'application/json; charset=UTF-8',
-    },
-    body: jsonEncode(<String, String>{
-      'email': email,
-      'password': password,
-    }),
-  );
-  if (response.statusCode == 200) {
-    Map<String, dynamic> j = json.decode(response.body);
-    var token = j["access_token"];
-    _guardarToken(token);
-
-    return token;
-  } else {
-    throw Exception('Datos incorrectos');
-  }
-}
-
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
@@ -99,6 +77,9 @@ class _MyHomePageState extends State<MyHomePage> {
     final prefs = await SharedPreferences.getInstance();
     String posibleToken = prefs.getString("token_api");
     if (posibleToken == null) {
+      setState(() {
+        this.cargandoGeneralmente = false;
+      });
       return false;
     }
     final http.Response response =
@@ -109,7 +90,6 @@ class _MyHomePageState extends State<MyHomePage> {
     setState(() {
       this.cargandoGeneralmente = false;
     });
-
     return response.statusCode == 200;
   }
 
