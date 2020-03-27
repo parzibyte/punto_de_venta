@@ -9,6 +9,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'constantes.dart';
 import 'dialogo.dart';
 import 'navigator.dart';
+import 'ventas_detalle.dart';
 
 class Ventas extends StatefulWidget {
   @override
@@ -176,15 +177,14 @@ class VentasState extends State<Ventas> {
                             Icons.zoom_in,
                             color: Colors.blue,
                           ),
-                          onPressed: () async {
-//                      await navigatorKey.currentState.push(
-//                        MaterialPageRoute(
-//                          builder: (context) => EditarVenta(
-//                            idVenta: this.ventas[index]["id"],
-//                          ),
-//                        ),
-//                      );
-//                      this.obtenerVentas();
+                          onPressed: () {
+                            navigatorKey.currentState.push(
+                              MaterialPageRoute(
+                                builder: (context) => DetalleDeVenta(
+                                  idVenta: this.ventas[index]["id"],
+                                ),
+                              ),
+                            );
                           },
                         ),
                         Builder(
@@ -211,7 +211,7 @@ class VentasState extends State<Ventas> {
                                       this.obtenerVentas();
                                       Scaffold.of(context).showSnackBar(
                                         SnackBar(
-                                          content: Text('Venta eliminado'),
+                                          content: Text('Venta eliminada'),
                                           duration: Duration(seconds: 1),
                                         ),
                                       );
